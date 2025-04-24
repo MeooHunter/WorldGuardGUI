@@ -5,7 +5,6 @@ import com.google.common.collect.Sets;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.Flags;
@@ -27,7 +26,7 @@ public class WorldGuard7Hook implements WorldGuardService {
     @Override
     public void remove(String regionName) {
         for (World world: Bukkit.getWorlds()) {
-            final RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+            final RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
             final ProtectedRegion region = getRegionByName(regionName);
 
             if(regionManager != null && region != null) {
@@ -56,7 +55,7 @@ public class WorldGuard7Hook implements WorldGuardService {
         RegionManager regionManager = null;
         for (World world: Bukkit.getWorlds()) {
             final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-            regionManager = container.get(BukkitAdapter.adapt(world));
+            regionManager = container.get(world);
 
 
             if(regionManager != null && region != null && regionManager.getRegions().containsKey(oldRegionName)) {
@@ -142,7 +141,7 @@ public class WorldGuard7Hook implements WorldGuardService {
     public ProtectedRegion getRegionByName(String regionName) {
         for (World world: Bukkit.getWorlds()) {
             final RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-            final RegionManager regions = container.get(BukkitAdapter.adapt(world));
+            final RegionManager regions = container.get(world);
             if(regions != null &&  regions.getRegion(regionName) != null) return regions.getRegion(regionName);
         }
         return null;
@@ -165,10 +164,10 @@ public class WorldGuard7Hook implements WorldGuardService {
     @Override
     public Set<ProtectedRegion> getApplicableRegions(WorldGuardLocation location) {
         RegionManager manager =  WorldGuard.getInstance().getPlatform().getRegionContainer()
-                .get(BukkitAdapter.adapt(Bukkit.getWorld(location.getWorldName())));
+                .get(Bukkit.getWorld(location.getWorldName()));
 
         ApplicableRegionSet applicableRegions = manager.getApplicableRegions(
-                BlockVector3.at(location.getX(), location.getY(), location.getZ())
+                BlockVector3.of(location.getX(), location.getY(), location.getZ())
         );
 
         ProtectedRegion globalRegion = manager.getRegion(GLOBAL_REGION);

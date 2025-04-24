@@ -26,8 +26,7 @@ public final class WorldGuardGUIPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        String version = Bukkit.getPluginManager().getPlugin("WorldGuard").getDescription().getVersion();
-        worldGuard = version.startsWith("6") ? new WorldGuard6Hook() : new WorldGuard7Hook();
+        worldGuard = new WorldGuard7Hook();
 
         templateManager = new TemplateManager(this);
         templateManager.initializeTemplates();
